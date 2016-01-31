@@ -56,14 +56,45 @@ class RandomMoviesTableViewController: UITableViewController {
     }
     
     
-    
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
-
+        
+        func titleStringForMovieAtIndex(index: Int) -> String? {
+            let movie = self.movies?[index]
+            let title = movie?.valueForKeyPath("im:name.label") as? String
+            return title
+        }
+        
+        func directorStringForMovieAtIndex(index: Int) -> String? {
+            let movie = self.movies?[index]
+            let director = movie?.valueForKeyPath("im:artist.label") as? String
+            return director
+        }
+        
+        func summaryStringForMovieAtIndex(index: Int) -> String? {
+            let movie = self.movies?[index]
+            let summary = movie?.valueForKeyPath("summary.label") as? String
+            return summary
+        }
+        
+        func posterImageURLForMovieAtIndex(index: Int) -> NSURL {
+            let movie = self.movies?[index]
+            let posterImageURLArray = movie?.valueForKeyPath("im:image.label") as? [String]
+            let posterImageURLString = posterImageURLArray?.last
+            let posterImageURL = NSURL(string: posterImageURLString!)!
+            return posterImageURL
+        }
+        
         // Configure the cell...
-        let movieRow = self.movies![indexPath.row]
-        let title = movieRow.valueForKeyPath("im:name.label") as? String
-        cell.textLabel?.text = title
+        let movieTitle = titleStringForMovieAtIndex(indexPath.row)
+        cell.textLabel?.text = titleStringForMovieAtIndex(indexPath.row)
+        //index path is always for 1 and the row is just for a row, in this case it corresponds to a movie.
+        
+        let movieImageURL = posterImageURLForMovieAtIndex(indexPath.row)
+        print("Image URL for movie\(movieTitle):")
+        print(movieImageURL)
+        
+       cell.imageView!.setImageWithURL(movieImageURL)
 
         return cell
     }
